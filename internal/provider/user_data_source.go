@@ -46,7 +46,7 @@ func (d *UserDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 func (d *UserDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "User data source for querying existing n8n cloud users",
+		MarkdownDescription: "User data source for querying existing n8n cloud users. You must specify either `id` or `email` to identify the user.",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -152,8 +152,9 @@ func (d *UserDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	data.CreatedAt = types.StringValue(user.CreatedAt.Format(time.RFC3339))
 	data.UpdatedAt = types.StringValue(user.UpdatedAt.Format(time.RFC3339))
 
-	if user.GlobalRole != nil {
-		data.Role = types.StringValue(user.GlobalRole.Name)
+	// Set role from API response
+	if user.Role != "" {
+		data.Role = types.StringValue(user.Role)
 	} else {
 		data.Role = types.StringNull()
 	}

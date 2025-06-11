@@ -12,7 +12,7 @@ import (
 
 // ListUsers retrieves all users from the n8n instance
 func (c *Client) ListUsers(ctx context.Context) ([]User, error) {
-	body, err := c.doRequest(ctx, http.MethodGet, "/users", nil)
+	body, err := c.doRequest(ctx, http.MethodGet, "/users?includeRole=true", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -25,21 +25,23 @@ func (c *Client) ListUsers(ctx context.Context) ([]User, error) {
 	return resp.Data, nil
 }
 
-// GetUser retrieves a user by ID
+// GetUser retrieves a user by ID with role information
 func (c *Client) GetUser(ctx context.Context, id string) (*User, error) {
-	path := fmt.Sprintf("/users/%s", id)
+	path := fmt.Sprintf("/users/%s?includeRole=true", id)
 	body, err := c.doRequest(ctx, http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	var resp UserResponse
-	if err := json.Unmarshal(body, &resp); err != nil {
+	// API returns user object directly, not wrapped in response
+	var user User
+	if err := json.Unmarshal(body, &user); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal user response: %w", err)
 	}
 
-	return &resp.Data, nil
+	return &user, nil
 }
+
 
 // GetUserByEmail retrieves a user by email
 func (c *Client) GetUserByEmail(ctx context.Context, email string) (*User, error) {
@@ -54,12 +56,13 @@ func (c *Client) CreateUser(ctx context.Context, req *CreateUserRequest) (*User,
 		return nil, err
 	}
 
-	var resp UserResponse
-	if err := json.Unmarshal(body, &resp); err != nil {
+	// API returns user object directly, not wrapped in response
+	var user User
+	if err := json.Unmarshal(body, &user); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal create user response: %w", err)
 	}
 
-	return &resp.Data, nil
+	return &user, nil
 }
 
 // UpdateUserRole updates a user's role

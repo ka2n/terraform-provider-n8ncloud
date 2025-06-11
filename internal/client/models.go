@@ -16,14 +16,8 @@ type User struct {
 	IsPending       bool      `json:"isPending"`
 	CreatedAt       time.Time `json:"createdAt"`
 	UpdatedAt       time.Time `json:"updatedAt"`
-	GlobalRole      *Role     `json:"globalRole,omitempty"`
+	Role            string    `json:"role,omitempty"` // Role as string: "global:admin" or "global:member"
 	InviteAcceptUrl string    `json:"inviteAcceptUrl,omitempty"`
-}
-
-// Role represents a user role in n8n
-type Role struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
 }
 
 // CreateUserRequest represents the request to create a new user
@@ -45,10 +39,6 @@ type UsersResponse struct {
 	NextCursor *string `json:"nextCursor"`
 }
 
-// UserResponse represents the response from single user endpoints
-type UserResponse struct {
-	Data User `json:"data"`
-}
 
 // ErrorResponse represents an error response from the API
 type ErrorResponse struct {

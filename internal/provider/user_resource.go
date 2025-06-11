@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -51,7 +52,7 @@ func (r *UserResource) Metadata(ctx context.Context, req resource.MetadataReques
 func (r *UserResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "User resource for managing n8n cloud users",
+		MarkdownDescription: "User resource for managing n8n cloud users. Users can be imported using their email address: `terraform import n8ncloud_user.example user@example.com`",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
@@ -81,16 +82,25 @@ func (r *UserResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:            true,
 			},
 			"is_pending": schema.BoolAttribute{
-				MarkdownDescription: "Whether the user has not yet set up their account",
+				MarkdownDescription: "Whether the user has not yet set up their account. This value is managed externally and will change when the user accepts their invitation.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "The timestamp when the user was created",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"updated_at": schema.StringAttribute{
-				MarkdownDescription: "The timestamp when the user was last updated",
+				MarkdownDescription: "The timestamp when the user was last updated. This value is updated externally when the user's information changes.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"invite_accept_url": schema.StringAttribute{
 				MarkdownDescription: "The URL for the user to accept their invitation",
@@ -153,6 +163,11 @@ func (r *UserResource) Create(ctx context.Context, req resource.CreateRequest, r
 	data.CreatedAt = types.StringValue(user.CreatedAt.Format(time.RFC3339))
 	data.UpdatedAt = types.StringValue(user.UpdatedAt.Format(time.RFC3339))
 
+	// Set role from API response
+	if user.Role != "" {
+		data.Role = types.StringValue(user.Role)
+	}
+
 	if user.FirstName != nil {
 		data.FirstName = types.StringValue(*user.FirstName)
 	} else {
@@ -200,8 +215,9 @@ func (r *UserResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	data.CreatedAt = types.StringValue(user.CreatedAt.Format(time.RFC3339))
 	data.UpdatedAt = types.StringValue(user.UpdatedAt.Format(time.RFC3339))
 
-	if user.GlobalRole != nil {
-		data.Role = types.StringValue(user.GlobalRole.Name)
+	// Set role from API response
+	if user.Role != "" {
+		data.Role = types.StringValue(user.Role)
 	}
 
 	if user.FirstName != nil {
@@ -279,5 +295,17 @@ func (r *UserResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 }
 
 func (r *UserResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	// Use email as import ID
+	email := req.ID
+	
+	// Get user directly by email (API supports email as identifier)
+	user, err := r.client.GetUser(ctx, email)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to get user by email %s, got error: %s", email, err))
+		return
+	}
+	
+	// Set the resource ID and email
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), user.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("email"), user.Email)...)
 }

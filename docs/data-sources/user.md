@@ -3,12 +3,12 @@
 page_title: "n8ncloud_user Data Source - n8ncloud"
 subcategory: ""
 description: |-
-  User data source for querying existing n8n cloud users
+  User data source for querying existing n8n cloud users. You must specify either id or email to identify the user.
 ---
 
 # n8ncloud_user (Data Source)
 
-User data source for querying existing n8n cloud users
+User data source for querying existing n8n cloud users. You must specify either `id` or `email` to identify the user.
 
 ## Example Usage
 

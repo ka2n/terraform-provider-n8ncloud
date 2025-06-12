@@ -3,12 +3,12 @@
 page_title: "n8ncloud_user Resource - n8ncloud"
 subcategory: ""
 description: |-
-  User resource for managing n8n cloud users
+  User resource for managing n8n cloud users. Users can be imported using their email address: terraform import n8ncloud_user.example user@example.com
 ---
 
 # n8ncloud_user (Resource)
 
-User resource for managing n8n cloud users
+User resource for managing n8n cloud users. Users can be imported using their email address: `terraform import n8ncloud_user.example user@example.com`
 
 ## Example Usage
 
@@ -50,6 +50,6 @@ output "developer_user" {
 - `first_name` (String) The first name of the user
 - `id` (String) The unique identifier of the user
 - `invite_accept_url` (String) The URL for the user to accept their invitation
-- `is_pending` (Boolean) Whether the user has not yet set up their account
+- `is_pending` (Boolean) Whether the user has not yet set up their account. This value is managed externally and will change when the user accepts their invitation.
 - `last_name` (String) The last name of the user
-- `updated_at` (String) The timestamp when the user was last updated
+- `updated_at` (String) The timestamp when the user was last updated. This value is updated externally when the user's information changes.

@@ -297,14 +297,14 @@ func (r *UserResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 func (r *UserResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// Use email as import ID
 	email := req.ID
-	
+
 	// Get user directly by email (API supports email as identifier)
 	user, err := r.client.GetUser(ctx, email)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to get user by email %s, got error: %s", email, err))
 		return
 	}
-	
+
 	// Set the resource ID and email
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), user.ID)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("email"), user.Email)...)

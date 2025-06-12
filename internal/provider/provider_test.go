@@ -18,7 +18,6 @@ var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 	"n8ncloud": providerserver.NewProtocol6WithError(New("test")()),
 }
 
-
 func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("TF_ACC"); v == "" {
 		t.Fatal("TF_ACC must be set for acceptance tests")

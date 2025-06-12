@@ -145,7 +145,7 @@ func TestAccUserResource_invalidRole(t *testing.T) {
 }
 
 // TestAccUserResource_externalStateChange tests that external changes to computed attributes
-// like is_pending don't cause unnecessary diffs
+// like is_pending don't cause unnecessary diffs.
 func TestAccUserResource_externalStateChange(t *testing.T) {
 	email := fmt.Sprintf("test-external-%d@example.com", time.Now().Unix())
 
@@ -195,7 +195,7 @@ resource "n8ncloud_user" "test" {
 `, email)
 }
 
-// TestAccUserResource_import tests importing a user by email
+// TestAccUserResource_import tests importing a user by email.
 func TestAccUserResource_import(t *testing.T) {
 	email := fmt.Sprintf("test-import-%d@example.com", time.Now().Unix())
 

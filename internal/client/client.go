@@ -18,21 +18,21 @@ const (
 	userAgent      = "terraform-provider-n8ncloud"
 )
 
-// Client is the n8n API client
+// Client is the n8n API client.
 type Client struct {
 	baseURL    string
 	apiKey     string
 	httpClient *http.Client
 }
 
-// Config holds the configuration for the client
+// Config holds the configuration for the client.
 type Config struct {
 	BaseURL string
 	APIKey  string
 	Timeout time.Duration
 }
 
-// NewClient creates a new n8n API client
+// NewClient creates a new n8n API client.
 func NewClient(config *Config) (*Client, error) {
 	if config.BaseURL == "" {
 		return nil, fmt.Errorf("base URL is required")
@@ -55,7 +55,7 @@ func NewClient(config *Config) (*Client, error) {
 	}, nil
 }
 
-// doRequest performs an HTTP request
+// doRequest performs an HTTP request.
 func (c *Client) doRequest(ctx context.Context, method, path string, body interface{}) ([]byte, error) {
 	url := fmt.Sprintf("%s/api/v1%s", c.baseURL, path)
 

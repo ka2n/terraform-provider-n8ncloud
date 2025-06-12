@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-// ListUsers retrieves all users from the n8n instance
+// ListUsers retrieves all users from the n8n instance.
 func (c *Client) ListUsers(ctx context.Context) ([]User, error) {
 	body, err := c.doRequest(ctx, http.MethodGet, "/users?includeRole=true", nil)
 	if err != nil {
@@ -25,7 +25,7 @@ func (c *Client) ListUsers(ctx context.Context) ([]User, error) {
 	return resp.Data, nil
 }
 
-// GetUser retrieves a user by ID with role information
+// GetUser retrieves a user by ID with role information.
 func (c *Client) GetUser(ctx context.Context, id string) (*User, error) {
 	path := fmt.Sprintf("/users/%s?includeRole=true", id)
 	body, err := c.doRequest(ctx, http.MethodGet, path, nil)
@@ -42,14 +42,13 @@ func (c *Client) GetUser(ctx context.Context, id string) (*User, error) {
 	return &user, nil
 }
 
-
-// GetUserByEmail retrieves a user by email
+// GetUserByEmail retrieves a user by email.
 func (c *Client) GetUserByEmail(ctx context.Context, email string) (*User, error) {
 	// The API uses email as the identifier in the URL
 	return c.GetUser(ctx, email)
 }
 
-// CreateUser creates a new user
+// CreateUser creates a new user.
 func (c *Client) CreateUser(ctx context.Context, req *CreateUserRequest) (*User, error) {
 	body, err := c.doRequest(ctx, http.MethodPost, "/users", req)
 	if err != nil {
@@ -65,7 +64,7 @@ func (c *Client) CreateUser(ctx context.Context, req *CreateUserRequest) (*User,
 	return &user, nil
 }
 
-// UpdateUserRole updates a user's role
+// UpdateUserRole updates a user's role.
 func (c *Client) UpdateUserRole(ctx context.Context, id string, newRole string) error {
 	path := fmt.Sprintf("/users/%s/role", id)
 	req := &UpdateUserRoleRequest{
@@ -76,7 +75,7 @@ func (c *Client) UpdateUserRole(ctx context.Context, id string, newRole string) 
 	return err
 }
 
-// DeleteUser deletes a user
+// DeleteUser deletes a user.
 func (c *Client) DeleteUser(ctx context.Context, id string) error {
 	path := fmt.Sprintf("/users/%s", id)
 	_, err := c.doRequest(ctx, http.MethodDelete, path, nil)

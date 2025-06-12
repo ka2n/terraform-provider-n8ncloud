@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// User represents an n8n cloud user
+// User represents an n8n cloud user.
 type User struct {
 	ID              string    `json:"id"`
 	Email           string    `json:"email"`
@@ -20,7 +20,7 @@ type User struct {
 	InviteAcceptUrl string    `json:"inviteAcceptUrl,omitempty"`
 }
 
-// CreateUserRequest represents the request to create a new user
+// CreateUserRequest represents the request to create a new user.
 type CreateUserRequest struct {
 	Email     string `json:"email"`
 	Role      string `json:"role,omitempty"`
@@ -28,19 +28,18 @@ type CreateUserRequest struct {
 	LastName  string `json:"lastName,omitempty"`
 }
 
-// UpdateUserRoleRequest represents the request to update a user's role
+// UpdateUserRoleRequest represents the request to update a user's role.
 type UpdateUserRoleRequest struct {
 	NewRoleName string `json:"newRoleName"`
 }
 
-// UsersResponse represents the response from the list users endpoint
+// UsersResponse represents the response from the list users endpoint.
 type UsersResponse struct {
 	Data       []User  `json:"data"`
 	NextCursor *string `json:"nextCursor"`
 }
 
-
-// ErrorResponse represents an error response from the API
+// ErrorResponse represents an error response from the API.
 type ErrorResponse struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
